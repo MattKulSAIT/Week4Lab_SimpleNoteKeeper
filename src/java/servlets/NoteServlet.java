@@ -31,11 +31,12 @@ public class NoteServlet extends HttpServlet {
         Note note = new Note(title, content);
         request.setAttribute("note", note);
         
+        String edit = request.getParameter("edit");
+        br.close();
+        if(edit == null){
         getServletContext().getRequestDispatcher("/WEB-INF/viewnote.jsp")
                 .forward(request, response); 
-        
-        String edit = request.getParameter("edit");
-        if(edit == null){}
+        }
         else{
             getServletContext().getRequestDispatcher("/WEB-INF/editnote.jsp")
                 .forward(request, response); 
@@ -43,13 +44,27 @@ public class NoteServlet extends HttpServlet {
     }
     
     
-    
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         getServletContext().getRequestDispatcher("/WEB-INF/helloWorldForm.jsp")
-                .forward(request, response); //These need to be updated to the proper file names 
+        String title = request.getParameter("title");
+        String content = request.getParameter("content");
+        Note note = new Note();
+        note.setTitle(title);
+        note.setContent(content);
+        
+        String path = getServletContext().getRealPath("/WEB-INF/note.txt");
+        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(path, false))); 
+        
+        pw.println(note.getTitle());
+        pw.println(note.getContent());
+        
+        pw.close();
+        
+        request.setAttribute("note", note);
+        
+         getServletContext().getRequestDispatcher("/WEB-INF/viewnote.jsp")
+                .forward(request, response);
     }
 
 
